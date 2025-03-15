@@ -13,6 +13,15 @@ async def handle(websocket: ServerConnection):
         data = json.loads(message)
         if data['type'] == 'mouse':
             pyautogui.moveTo(data['data']['x'], data['data']['y'])
+        if data['type'] == 'click':
+            pyautogui.click()
+        if data['type'] == 'right-click':
+            pyautogui.rightClick()
+        if data['type'] == 'keyDown':
+            pyautogui.keyDown(data['data'])
+        if data['type'] == 'keyUp':
+            pyautogui.keyUp(data['data'])
+        
         # if data['type'] == 'input':
         #     terminal.write(data['data'])
         # if data['type'] == 'resize':
