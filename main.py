@@ -7,7 +7,6 @@ import pyautogui
 async def handle(websocket: ServerConnection): 
     terminal = Terminal(websocket)
     screen = Screen(websocket)
-    print('cmd started')
     # read_task = asyncio.create_task(terminal.read())
     stream_task = asyncio.create_task(screen.stream())
     async for message in websocket:
@@ -21,7 +20,8 @@ async def handle(websocket: ServerConnection):
     # await read_task
     await stream_task
 async def main():
-    async with serve(handle, "localhost", 5000) as server:
+    async with serve(handle, "0.0.0.0", 5000) as server:
+        print('server started')
         await server.serve_forever()
 
 asyncio.run(main())
