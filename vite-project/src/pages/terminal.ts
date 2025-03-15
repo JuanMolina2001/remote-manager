@@ -1,43 +1,30 @@
 
-import { Terminal } from '@/components/terminal'
-import { Base64 } from '@xterm/addon-clipboard';
+import { Terminal, Screen } from '@/components'
 window.customElements.define('terminal-component', Terminal);
+window.customElements.define('screen-component', Screen);
 
 export function terminalPage(app: HTMLElement) {
-    function base64ToBlob(base64: Base64URLString, mimeType: string): Blob {
-        const byteCharacters = atob(base64); // Decodificar Base64
-        const byteNumbers = new Uint8Array(byteCharacters.length);
 
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-
-        return new Blob([byteNumbers], { type: mimeType });
-    }
     // const terminal = document.createElement('terminal-component') as Terminal;
     // app.appendChild(terminal);
-    const canvas = document.createElement('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    app.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    const ws = new WebSocket('ws://localhost:5000/');
-    // terminal.ws = ws;
-    const img = new Image();
-    let load = false
+    const ws = new WebSocket('ws://192.168.18.248:5000/');
+    const screen = document.createElement('screen-component') as Screen;
+    app.appendChild(screen);
     
+    screen.addEventListener('mousemove', (event) => {
+        // Obtener la posición del elemento en la página
+        const rect = screen.getBoundingClientRect();
+
+        // Calcular la posición del mouse relativa al elemento
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        ws.send(JSON.stringify({ type: 'mouse', data: { x, y } }));
+    });
     ws.onmessage = (e) => {
         const message = JSON.parse(e.data);
         if (message.type === 'image') {
-            const blob = base64ToBlob(message.data, 'image/png');
-            const url = URL.createObjectURL(blob);
-            img.src = url;
-            
-            img.onload = () => {
-                ctx?.clearRect(0, 0,canvas.width, canvas.height);
-                ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-            }
-          
+            screen.render(message.data);
         }
         // if (message.type === 'output') {
         //     terminal.write(message.data);
