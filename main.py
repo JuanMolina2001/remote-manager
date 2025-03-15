@@ -18,8 +18,10 @@ async def handle(websocket: ServerConnection):
         if data['type'] == 'right-click':
             pyautogui.rightClick()
         if data['type'] == 'keyDown':
+            print(data['data'])
             pyautogui.keyDown(data['data'])
         if data['type'] == 'keyUp':
+            print(data['data'])
             pyautogui.keyUp(data['data'])
         
         # if data['type'] == 'input':
