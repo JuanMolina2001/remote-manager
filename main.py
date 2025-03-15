@@ -3,7 +3,7 @@ from websockets.asyncio.server import serve , ServerConnection
 from terminal import Terminal
 from screen import Screen
 import json
-
+import pyautogui
 async def handle(websocket: ServerConnection): 
     terminal = Terminal(websocket)
     screen = Screen(websocket)
@@ -12,6 +12,8 @@ async def handle(websocket: ServerConnection):
     stream_task = asyncio.create_task(screen.stream())
     async for message in websocket:
         data = json.loads(message)
+        if data['type'] == 'mouse':
+            pyautogui.moveTo(data['data']['x'], data['data']['y'])
         # if data['type'] == 'input':
         #     terminal.write(data['data'])
         # if data['type'] == 'resize':

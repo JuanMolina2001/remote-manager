@@ -10,11 +10,8 @@ class Screen:
         self.websocket = websocket
     async def stream(self):
         print('stream started')
-        count = 0
         width, height = pyautogui.size()
         while True:
-            count += 1
-            print(count)
             try:
                 sc = pyautogui.screenshot(region= (0, 0, width, height))
                 buffer = BytesIO()
